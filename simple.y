@@ -326,7 +326,7 @@ equality_expr:
 relational_expr:
          additive_expr
 	 | relational_expr LESS additive_expr {
-		fprintf(fasm, "\n\t# !=\n");
+		fprintf(fasm, "\n\t# <\n");
 		fprintf(fasm, "\tcmp %%%s, %%%s\n", regStk[top-1], regStk[top-2]);
 		fprintf(fasm, "\tjl less_%f\n", jumpLabelCounter);
 		fprintf(fasm, "\tmovq $0x0, %%%s\n", regStk[top-2]);
@@ -339,7 +339,7 @@ relational_expr:
 		top--;
 	}
 	 | relational_expr GREAT additive_expr {
-		fprintf(fasm, "\n\t# !=\n");
+		fprintf(fasm, "\n\t# >\n");
 		fprintf(fasm, "\tcmp %%%s, %%%s\n", regStk[top-1], regStk[top-2]);
 		fprintf(fasm, "\tjg great_%f\n", jumpLabelCounter);
 		fprintf(fasm, "\tmovq $0x0, %%%s\n", regStk[top-2]);
@@ -352,7 +352,7 @@ relational_expr:
 		top--;
 	}
 	 | relational_expr LESSEQUAL additive_expr {
-		fprintf(fasm, "\n\t# !=\n");
+		fprintf(fasm, "\n\t# <=\n");
 		fprintf(fasm, "\tcmp %%%s, %%%s\n", regStk[top-1], regStk[top-2]);
 		fprintf(fasm, "\tjle lessequal_%f\n", jumpLabelCounter);
 		fprintf(fasm, "\tmovq $0x0, %%%s\n", regStk[top-2]);
@@ -365,7 +365,7 @@ relational_expr:
 		top--;
 	}
 	 | relational_expr GREATEQUAL additive_expr {
-		fprintf(fasm, "\n\t# !=\n");
+		fprintf(fasm, "\n\t# >=\n");
 		fprintf(fasm, "\tcmp %%%s, %%%s\n", regStk[top-1], regStk[top-2]);
 		fprintf(fasm, "\tjge greatequal_%f\n", jumpLabelCounter);
 		fprintf(fasm, "\tmovq $0x0, %%%s\n", regStk[top-2]);
@@ -508,7 +508,7 @@ statement:
 	 | compound_statement
 	 | IF LPARENT expression RPARENT {
 			ifLabelCounter++;
-			fprintf(fasm, "\tcmpq $0, %%rbx\n");
+			fprintf(fasm, "\tcmpq $0, %%%s\n", regStk[top-1]);
 			fprintf(fasm, "\tje ifEnd_%f\n", ifLabelCounter);
 			//fall through to statements...
 			
@@ -542,7 +542,7 @@ statement:
 	 }
         expression RPARENT {
 		// act2
-		fprintf(fasm, "\tcmpq $0, %%rbx\n");
+		fprintf(fasm, "\tcmpq $0, %%%s\n", regStk[top-1]);
 		fprintf(fasm, "\tje loop_end_%d\n", $<my_nlabel>1);
 		top--;
          }
@@ -557,8 +557,9 @@ statement:
 		fprintf(fasm, "loop_start_%d:\n", $<my_nlabel>1);
 	 }
 	 statement WHILE LPARENT expression {
-		fprintf(fasm, "\tcmpq $0, %%rbx\n");
+		fprintf(fasm, "\tcmpq $0, %%%s\n", regStk[top-1]);
 		fprintf(fasm, "\tjne loop_start_%d\n", $<my_nlabel>1);
+		top--;
 	 }
 	 RPARENT SEMICOLON {
 		fprintf(fasm, "loop_end_%d:\n", $<my_nlabel>1);
@@ -569,7 +570,7 @@ statement:
 		fprintf(fasm, "loop_start_%d:\n", $<my_nlabel>1);
 	 }
 	 expression {
-		fprintf(fasm, "\tcmpq $0, %%rbx\n");
+		fprintf(fasm, "\tcmpq $0, %%%s\n", regStk[top-1]);
 		fprintf(fasm, "\tje loop_end_%d\n", $<my_nlabel>1);
 		fprintf(fasm, "\tjne loop_body_start_%d\n", $<my_nlabel>1);
 		top--;
@@ -602,7 +603,7 @@ jump_statement:
 	 }
 	 | BREAK SEMICOLON {
 		$<my_nlabel>1=nlabel;
-		fprintf(fasm, "\tjmp loop_end_%d\n", --$<my_nlabel>1);
+		fprintf(fasm, "\t  jmp loop_end_%d\n", --$<my_nlabel>1);
 	 }
 	 | RETURN expression SEMICOLON {
 		 fprintf(fasm, "\tmovq %%rbx, %%rax\n");
