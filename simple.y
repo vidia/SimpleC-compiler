@@ -508,6 +508,7 @@ statement:
 	 | compound_statement
 	 | IF LPARENT expression RPARENT {
 			ifLabelCounter++;
+			fprintf(fasm, "\n\t# Begin IF statement\n");
 			fprintf(fasm, "\tcmpq $0, %%%s\n", regStk[top-1]);
 			fprintf(fasm, "\tje ifEnd_%f\n", ifLabelCounter);
 			//fall through to statements...
@@ -538,6 +539,7 @@ statement:
 		// act 1
 		$<my_nlabel>1=nlabel;
 		nlabel++;
+		fprintf(fasm, "\n\t# Begin WHILE loop\n");
 		fprintf(fasm, "loop_start_%d:\n", $<my_nlabel>1);
 	 }
         expression RPARENT {
@@ -554,6 +556,7 @@ statement:
 	 | DO {
 		$<my_nlabel>1=nlabel;
 		nlabel++;
+		fprintf(fasm, "\n\t# Begin DO/WHILE loop\n");
 		fprintf(fasm, "loop_start_%d:\n", $<my_nlabel>1);
 	 }
 	 statement WHILE LPARENT expression {
@@ -567,6 +570,7 @@ statement:
 	 | FOR LPARENT assignment SEMICOLON {
 		$<my_nlabel>1=nlabel;
 		nlabel++;
+		fprintf(fasm, "\n\t# Begin FOR loop\n");
 		fprintf(fasm, "loop_start_%d:\n", $<my_nlabel>1);
 	 }
 	 expression {
@@ -599,11 +603,13 @@ else_optional:
 jump_statement:
      CONTINUE SEMICOLON {
 		$<my_nlabel>1=nlabel;
+		fprintf(fasm, "\n\t# CONTINUE\n");
 		fprintf(fasm, "\tjmp loop_start_%d\n", --$<my_nlabel>1);
 	 }
 	 | BREAK SEMICOLON {
 		$<my_nlabel>1=nlabel;
-		fprintf(fasm, "\t  jmp loop_end_%d\n", --$<my_nlabel>1);
+		fprintf(fasm, "\n\t# BREAK\n");
+		fprintf(fasm, "\tjmp loop_end_%d\n", --$<my_nlabel>1);
 	 }
 	 | RETURN expression SEMICOLON {
 		 fprintf(fasm, "\tmovq %%rbx, %%rax\n");
