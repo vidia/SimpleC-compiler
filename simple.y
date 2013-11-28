@@ -541,6 +541,7 @@ statement:
 		nlabel++;
 		fprintf(fasm, "\n\t# Begin WHILE loop\n");
 		fprintf(fasm, "loop_start_%d:\n", $<my_nlabel>1);
+		fprintf(fasm, "loop_continue_%d:\n", $<my_nlabel>1);
 	 }
         expression RPARENT {
 		// act2
@@ -558,6 +559,7 @@ statement:
 		nlabel++;
 		fprintf(fasm, "\n\t# Begin DO/WHILE loop\n");
 		fprintf(fasm, "loop_start_%d:\n", $<my_nlabel>1);
+		fprintf(fasm, "loop_continue_%d:\n", $<my_nlabel>1);
 	 }
 	 statement WHILE LPARENT expression {
 		fprintf(fasm, "\tcmpq $0, %%%s\n", regStk[top-1]);
@@ -581,6 +583,7 @@ statement:
 	 } 
 	 SEMICOLON {
 		fprintf(fasm, "\tloop_assignment_%d:\n", $<my_nlabel>1);
+		fprintf(fasm, "loop_continue_%d:\n", $<my_nlabel>1);
 	 }
 	 assignment {
 		fprintf(fasm, "\tjmp loop_start_%d\n", $<my_nlabel>1);
@@ -604,7 +607,7 @@ jump_statement:
      CONTINUE SEMICOLON {
 		$<my_nlabel>1=nlabel;
 		fprintf(fasm, "\n\t# CONTINUE\n");
-		fprintf(fasm, "\tjmp loop_start_%d\n", --$<my_nlabel>1);
+		fprintf(fasm, "\tjmp loop_continue_%d\n", --$<my_nlabel>1);
 	 }
 	 | BREAK SEMICOLON {
 		$<my_nlabel>1=nlabel;
