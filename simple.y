@@ -598,10 +598,11 @@ else_optional:
 jump_statement:
      CONTINUE SEMICOLON {
 		$<my_nlabel>1=nlabel;
-		fprintf(fasm, "\tjmp loop_start_%d\n", $<my_nlabel>1);
+		fprintf(fasm, "\tjmp loop_start_%d\n", --$<my_nlabel>1);
 	 }
 	 | BREAK SEMICOLON {
-		fprintf(fasm, "\tjmp loop_end_%d\n", $<my_nlabel>1);
+		$<my_nlabel>1=nlabel;
+		fprintf(fasm, "\tjmp loop_end_%d\n", --$<my_nlabel>1);
 	 }
 	 | RETURN expression SEMICOLON {
 		 fprintf(fasm, "\tmovq %%rbx, %%rax\n");
