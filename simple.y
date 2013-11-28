@@ -63,7 +63,6 @@ double jumpLabelCounter = 0;
 
 double ifLabelCounter = 0; 
 
-int loop_nest = 0; 
 
 void addGlobalVar(char *id, int type) {
   global_vars_table[nglobals]=id;
@@ -538,64 +537,55 @@ statement:
 	 | WHILE LPARENT {
 		// act 1
 		$<my_nlabel>1=nlabel;
-		if(loop_nest == 0)
-			nlabel++;
-		loop_nest++;
-		fprintf(fasm, "loop_start_%d_%d:\n", $<my_nlabel>1, loop_nest);
+		nlabel++;
+		fprintf(fasm, "loop_start_%d:\n", $<my_nlabel>1);
 	 }
         expression RPARENT {
 		// act2
 		fprintf(fasm, "\tcmpq $0, %%rbx\n");
-		fprintf(fasm, "\tje loop_end_%d_%d\n", $<my_nlabel>1, loop_nest);
+		fprintf(fasm, "\tje loop_end_%d\n", $<my_nlabel>1);
 		top--;
          }
          statement {
 		// act3
-		fprintf(fasm, "\tjmp loop_start_%d_%d\n", $<my_nlabel>1, loop_nest);
-		fprintf(fasm, "loop_end_%d_%d:\n", $<my_nlabel>1, loop_nest);
-		loop_nest--;
+		fprintf(fasm, "\tjmp loop_start_%d\n", $<my_nlabel>1);
+		fprintf(fasm, "loop_end_%d:\n", $<my_nlabel>1);
 	 }
 	 | DO {
 		$<my_nlabel>1=nlabel;
-		if(loop_nest == 0)
-			nlabel++;
-		loop_nest++;
-		fprintf(fasm, "loop_start_%d_%d:\n", $<my_nlabel>1, loop_nest);
+		nlabel++;
+		fprintf(fasm, "loop_start_%d:\n", $<my_nlabel>1);
 	 }
 	 statement WHILE LPARENT expression {
 		fprintf(fasm, "\tcmpq $0, %%rbx\n");
-		fprintf(fasm, "\tjne loop_start_%d_%d\n", $<my_nlabel>1, loop_nest);
+		fprintf(fasm, "\tjne loop_start_%d\n", $<my_nlabel>1);
 	 }
 	 RPARENT SEMICOLON {
-		fprintf(fasm, "loop_end_%d_%d:\n", $<my_nlabel>1, loop_nest);
-		loop_nest--;
+		fprintf(fasm, "loop_end_%d:\n", $<my_nlabel>1);
 	 }
 	 | FOR LPARENT assignment SEMICOLON {
 		$<my_nlabel>1=nlabel;
-		if(loop_nest == 0)
-			nlabel++;
-		loop_nest++;
-		fprintf(fasm, "loop_start_%d_%d:\n", $<my_nlabel>1, loop_nest);
+		nlabel++;
+		fprintf(fasm, "loop_start_%d:\n", $<my_nlabel>1);
 	 }
 	 expression {
 		fprintf(fasm, "\tcmpq $0, %%rbx\n");
-		fprintf(fasm, "\tje loop_end_%d_%d\n", $<my_nlabel>1, loop_nest);
-		fprintf(fasm, "\tjne loop_body_start_%d_%d\n", $<my_nlabel>1, loop_nest);
+		fprintf(fasm, "\tje loop_end_%d\n", $<my_nlabel>1);
+		fprintf(fasm, "\tjne loop_body_start_%d\n", $<my_nlabel>1);
 		top--;
 	 } 
 	 SEMICOLON {
-		fprintf(fasm, "\tloop_assignment_%d_%d:\n", $<my_nlabel>1, loop_nest);
+		fprintf(fasm, "\tloop_assignment_%d:\n", $<my_nlabel>1);
 	 }
 	 assignment {
-		fprintf(fasm, "\tjmp loop_start_%d_%d\n", $<my_nlabel>1, loop_nest);
+		fprintf(fasm, "\tjmp loop_start_%d\n", $<my_nlabel>1);
 	 }
 	 RPARENT {
-		fprintf(fasm, "\tloop_body_start_%d_%d:\n", $<my_nlabel>1, loop_nest);
+		fprintf(fasm, "\tloop_body_start_%d:\n", $<my_nlabel>1);
 	 }
 	 statement {
-		fprintf(fasm, "\tjmp loop_assignment_%d_%d\n", $<my_nlabel>1, loop_nest);
-		fprintf(fasm, "loop_end_%d_%d:\n", $<my_nlabel>1, loop_nest);
-		loop_nest--;
+		fprintf(fasm, "\tjmp loop_assignment_%d\n", $<my_nlabel>1);
+		fprintf(fasm, "loop_end_%d:\n", $<my_nlabel>1);
 	 }
 	 | jump_statement
 	 ;
@@ -608,10 +598,10 @@ else_optional:
 jump_statement:
      CONTINUE SEMICOLON {
 		$<my_nlabel>1=nlabel;
-		fprintf(fasm, "\tjmp loop_start_%d_%d\n", $<my_nlabel>1, loop_nest);
+		fprintf(fasm, "\tjmp loop_start_%d\n", $<my_nlabel>1);
 	 }
 	 | BREAK SEMICOLON {
-		fprintf(fasm, "\tjmp loop_end_%d_%d\n", nlabel, loop_nest);
+		fprintf(fasm, "\tjmp loop_end_%d\n", nlabel);
 	 }
 	 | RETURN expression SEMICOLON {
 		 fprintf(fasm, "\tmovq %%rbx, %%rax\n");
