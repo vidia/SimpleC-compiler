@@ -192,23 +192,43 @@ var_type: CHARSTAR | CHARSTARSTAR | LONG | LONGSTAR | VOID;
 
 assignment:
          WORD EQUAL expression {
-
                  char * id = $<string_val>1;
                  int i = lookupLocalVar(id);
                  
                  if (i>=0) {
                          fprintf(fasm, "\t#Assign to Local var %s\n", id);
-                         fprintf(fasm, "\tmovq %%%s, %d(%%rsp)\n",
-                                 regStk[top-1], 8*(MAX_LOCALS-i) );
+                         fprintf(fasm, "\tmovq %%%s, %d(%%rsp)\n", regStk[top-1], 8*(MAX_LOCALS-i) );
                  }
                  else {
                          fprintf(fasm, "\t#Assign to Global var %s\n", id);
-                         fprintf(fasm, "\tmovq %%%s, %s\n",
-                                 regStk[top-1], id);
+                         fprintf(fasm, "\tmovq %%%s, %s\n", regStk[top-1], id);
                  }
                  top--;
 	 }
-	 | WORD LBRACE expression RBRACE EQUAL expression
+	 | WORD LBRACE expression RBRACE {
+		 //multiply the top of the stack by 8
+		 fprintf(fasm, "\t\n#Calculating array offset...\n\t#Multiply the index by 8\n");
+		 fprintf(fasm, "\tmovq $8, %%rbp\n");
+		 fprintf(fasm, "\timulq %%%s, %%rbp\n", regStk[top-1]);
+	 }
+	 EQUAL expression {
+  		 // Lookup local var
+ 	     char * id = $<string_val>1;
+		 int i = lookupLocalVar(id);
+		 
+		 if (i>=0) {
+			 fprintf(fasm, "\t#Push Local array var %s\n", id);
+			 fprintf(fasm, "\taddq %%%s, %d(%%rsp)\n", regStk[top-2],  8*(MAX_LOCALS-i)); //Add the start of the array to the offset
+			 fprintf(fasm, "\tmovq %%%s, (%%%s)\n", regStk[top-1], regStk[top-2]);
+			 fprintf(fasm, "\tmovq (%%%s), %%%s\n", regStk[top-2], regStk[top-2]);
+			 top--; 
+		 }
+		 else {
+			 fprintf(fasm, "\t#Push Global array var %s\n", id);
+			 fprintf(fasm, "\tmovq %s, %%%s\n", id, regStk[top]);
+			 top++;
+		 }
+	  }
 	 ;
 
 call :
