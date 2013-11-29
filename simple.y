@@ -473,7 +473,7 @@ regStk[top] );
 		 i = lookupLocalVar(id);
 		 if (i>=0) {
 			 fprintf(fasm, "\t#Push Local array var %s\n", id);
-			 fprintf(fasm, "\tmovq %%rsp+%d, %%rbp\n", 8*(MAX_LOCALS-i));
+			 fprintf(fasm, "\tmovq %d(%%rsp), %%rbp\n", 8*(MAX_LOCALS-i));
 		 }
 		 else {
 			 fprintf(fasm, "\t#Push Global array var %s\n", id);
