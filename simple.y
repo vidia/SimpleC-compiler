@@ -479,8 +479,7 @@ regStk[top] );
 			 fprintf(fasm, "\t#Push Global array var %s\n", id);
 			 fprintf(fasm, "\tmovq %s, %%rbp\n", id);
 		 }
-		 fprintf(fasm, "\tmovq (%%rbp+%%%s), %%%s\n", regStk[top-1], regStk[top-1]);
-		 
+		 fprintf(fasm "\taddq %%rdp, %%%s\n", regStk[top-1]);
 	  }
 	  | AMPERSAND WORD
 	  | INTEGER_CONST {
