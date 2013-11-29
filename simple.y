@@ -471,16 +471,22 @@ regStk[top] );
 		 int i;
  	     char * id = $<string_val>1;
 		 i = lookupLocalVar(id);
+		 
+		 //multiply the top of the stack by 8
+		 fprintf(fasm, "\t\n#Calculating array offset...\n\t#Multiply the index by 8\n");
+		 fprintf(fasm, "\tmovq $8, %%rbp\n");
+		 fprintf(fasm, "\timulq %%%s, %%rbp\n", regStk[top-1]);
+		 
 		 if (i>=0) {
 			 fprintf(fasm, "\t#Push Local array var %s\n", id);
-			 fprintf(fasm, "\tmovq %d(%%rsp), %%rbp\n", 8*(MAX_LOCALS-i));
+			 fprintf(fasm, "\timulq %%%s, %d(%%rsp)\n", regStk[top-1],  8*(MAX_LOCALS-i));
+			 top++;
 		 }
 		 else {
 			 fprintf(fasm, "\t#Push Global array var %s\n", id);
-			 fprintf(fasm, "\tmovq %s, %%rbp\n", id);
+			 fprintf(fasm, "\tmovq %s, %%%s\n", id, regStk[top]);
+			 top++;
 		 }
-		 fprintf(fasm, "\timul %%%s, %%%s, $8\n", regStk[top-1], regStk[top-1]);
-		 fprintf(fasm, "\taddq %%rbp, %%%s\n", regStk[top-1]);
 	  }
 	  | AMPERSAND WORD
 	  | INTEGER_CONST {
