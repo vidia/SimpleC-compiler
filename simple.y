@@ -466,7 +466,22 @@ regStk[top] );
 			 top++;
 		 }
 	  }
-	  | WORD LBRACE expression RBRACE
+	  | WORD LBRACE expression RBRACE {
+  		 // Lookup local var
+		 int i;
+ 	     char * id = $<string_val>1;
+		 i = lookupLocalVar(id);
+		 if (i>=0) {
+			 fprintf(fasm, "\t#Push Local array var %s\n", id);
+			 fprintf(fasm, "\tmovq %%rsp+%d, %%rbp\n", 8*(MAX_LOCALS-i));
+		 }
+		 else {
+			 fprintf(fasm, "\t#Push Global array var %s\n", id);
+			 fprintf(fasm, "\tmovq %s, %%rbp\n", id);
+		 }
+		 fprintf(fasm, "\tmovq %%rbp+%%%s, %%%s\n", regStk[top-1], regStk[top]);
+		 top++;
+	  }
 	  | AMPERSAND WORD
 	  | INTEGER_CONST {
 		  fprintf(fasm, "\n\t# push %s\n", $<string_val>1);
@@ -492,11 +507,11 @@ local_var:
         var_type local_var_list SEMICOLON;
 
 local_var_list: WORD {
-	addLocalVar($<string_val>1, current_type);
-        }
-        | local_var_list COMA WORD {
+		addLocalVar($<string_val>1, current_type);
+     }
+     | local_var_list COMA WORD {
 		addLocalVar($<string_val>3, current_type);
-	}
+	 }
         ;
 
 statement:
