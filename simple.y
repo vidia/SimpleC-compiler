@@ -479,7 +479,7 @@ regStk[top] );
 			 fprintf(fasm, "\t#Push Global array var %s\n", id);
 			 fprintf(fasm, "\tmovq %s, %%rbp\n", id);
 		 }
-		 fprintf(fasm, "\timulq %%%s, %%%s, $8\n", regStk[top-1], regStk[top-1]);
+		 fprintf(fasm, "\timul %%%s, %%%s, $8\n", regStk[top-1], regStk[top-1]);
 		 fprintf(fasm, "\taddq %%rbp, %%%s\n", regStk[top-1]);
 	  }
 	  | AMPERSAND WORD
