@@ -484,7 +484,7 @@ primary_expr:
 		 i = lookupLocalVar(id);
 		 if (i>=0) {
 			 fprintf(fasm, "\t#Push Local var %s\n", id);
-			 fprintf(fasm, "\tmovq %d(%%rsp), %%%s\n", 8*(MAX_LOCALS-i), 
+			 fprintf(fasm, "\tmovq %d(%%rsp), %%%s\n", 8*(i), 
 regStk[top] );
 			 top++;
 		 }
