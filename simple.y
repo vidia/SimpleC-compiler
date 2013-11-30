@@ -249,11 +249,11 @@ call :
 			fprintf(fasm, "\tmovq %%%s, %%%s\n",
 			  regStk[top], regArgs[i]);
 		 }
-		 if (!strcmp(funcName, "printf")) {
+		 ////if (!strcmp(funcName, "printf")) {
 			 // printf has a variable number of arguments
 			 // and it need the following
 			 fprintf(fasm, "\tmovl    $0, %%eax\n");
-		 }
+		 ////}
 		 fprintf(fasm, "\tcall %s\n", funcName);
 		 fprintf(fasm, "\tmovq %%rax, %%%s\n", regStk[top]);
 		 top++;
