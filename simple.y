@@ -566,7 +566,7 @@ statement:
 			fprintf(fasm, "\tcmpq $0, %%%s\n", regStk[top-1]);
 			fprintf(fasm, "\tje ifEnd_%f\n", ifLabelCounter);
 			//fall through to statements...
-			
+			top--;
 			/*
 			if (something is true)
 			lbl: ifStart_#: /answer is true
