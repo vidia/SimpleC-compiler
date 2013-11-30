@@ -212,13 +212,14 @@ assignment:
 		 i = lookupLocalVar(id);
 		 
 		 //multiply the top of the stack by 8
-		 fprintf(fasm, "\t\n#Calculating array offset...\n\t#Multiply the index by 8\n");
+		 fprintf(fasm, "\t\n#Calculating array offset...\n");
+		 fprintf(fasm, "\t#Multiply the index by 8\n");
 		 fprintf(fasm, "\tmovq $8, %%rbp\n");
-		 fprintf(fasm, "\timulq %%%s, %%rbp\n", regStk[top-1]);
+		 fprintf(fasm, "\timulq %%rbp, %%%s\n", regStk[top-1]);
 		 
 		 if (i>=0) {
 			 fprintf(fasm, "\t#Push Local array var %s\n", id);
-			 fprintf(fasm, "\taddq %%%s, %d(%%rsp)\n", regStk[top],  8*(MAX_LOCALS-i));
+			 fprintf(fasm, "\taddq %d(%%rsp), %%%s\n", 8*(MAX_LOCALS-i), regStk[top]);
 			 top++;
 		 }
 		 else {
@@ -231,7 +232,7 @@ assignment:
 		 top--;
 	 }
 	 EQUAL expression {
-		 fprintf(fasm, "\tmovq (%%%s), %%%s\n", regStk[top-2], regStk[top-1]);
+		 fprintf(fasm, "\tmovq %%%s, (%%%s)\n", regStk[top-1], regStk[top-2]);
 		 top--;
 	 }
 	 ;
@@ -498,13 +499,14 @@ regStk[top] );
 		 i = lookupLocalVar(id);
 		 
 		 //multiply the top of the stack by 8
-		 fprintf(fasm, "\t\n#Calculating array offset...\n\t#Multiply the index by 8\n");
+		 fprintf(fasm, "\t\n#Calculating array offset...\n");
+		 fprintf(fasm, "\t#Multiply the index by 8\n");
 		 fprintf(fasm, "\tmovq $8, %%rbp\n");
-		 fprintf(fasm, "\timulq %%%s, %%rbp\n", regStk[top-1]);
+		 fprintf(fasm, "\timulq %%rbp, %%%s\n", regStk[top-1]);
 		 
 		 if (i>=0) {
 			 fprintf(fasm, "\t#Push Local array var %s\n", id);
-			 fprintf(fasm, "\taddq %%%s, %d(%%rsp)\n", regStk[top],  8*(MAX_LOCALS-i));
+			 fprintf(fasm, "\taddq %d(%%rsp), %%%s\n", 8*(MAX_LOCALS-i), regStk[top]);
 			 top++;
 		 }
 		 else {
