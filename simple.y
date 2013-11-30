@@ -219,13 +219,14 @@ assignment:
 		 
 		 if (i>=0) {
 			 fprintf(fasm, "\t#Push Local array var %s\n", id);
-			 fprintf(fasm, "\tmovq %d(%%rsp), %%%s\n", 8*(MAX_LOCALS-i), regStk[top]);
+			 fprintf(fasm, "\tmovq %d(%%rsp), %%%s\n", 8*(i), regStk[top]);
 			 fprintf(fasm, "\tmovq (%%%s), %%%s\n", regStk[top], regStk[top]);
 			 top++;
 		 }
 		 else {
 			 fprintf(fasm, "\t#Push Global array var %s\n", id);
 			 fprintf(fasm, "\tmovq %s, %%%s\n", id, regStk[top]);
+			 fprintf(fasm, "\tmovq (%%%s), %%%s\n", regStk[top], regStk[top]);
 			 top++;
 		 }
 		 
@@ -507,13 +508,14 @@ regStk[top] );
 		 
 		 if (i>=0) {
 			 fprintf(fasm, "\t#Push Local array var %s\n", id);
-			 fprintf(fasm, "\tmovq %d(%%rsp), %%%s\n", 8*(MAX_LOCALS-i), regStk[top]);
+			 fprintf(fasm, "\tmovq %d(%%rsp), %%%s\n", 8*(i), regStk[top]);
 			 fprintf(fasm, "\tmovq (%%%s), %%%s\n", regStk[top], regStk[top]);
 			 top++;
 		 }
 		 else {
 			 fprintf(fasm, "\t#Push Global array var %s\n", id);
 			 fprintf(fasm, "\tmovq %s, %%%s\n", id, regStk[top]);
+			 fprintf(fasm, "\tmovq (%%%s), %%%s\n", regStk[top], regStk[top]);
 			 top++;
 		 }
 		 
