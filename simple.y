@@ -231,7 +231,7 @@ assignment:
 		 top--;
 	 }
 	 EQUAL expression {
-		 fprintf(fasm, "\tmovq (%%%s), %%%s\n", regStk[top-1], regStk[top-2]);
+		 fprintf(fasm, "\tmovq (%%%s), %%%s\n", regStk[top-2], regStk[top-1]);
 		 top--;
 	 }
 	 ;
