@@ -219,7 +219,7 @@ assignment:
 		 
 		 if (i>=0) {
 			 fprintf(fasm, "\t#Push Local array var %s\n", id);
-			 fprintf(fasm, "\taddq %d(%%rsp), %%%s\n", 8*(MAX_LOCALS-i), regStk[top]);
+			 fprintf(fasm, "\tmovq %d(%%rsp), %%%s\n", 8*(MAX_LOCALS-i), regStk[top]);
 			 top++;
 		 }
 		 else {
