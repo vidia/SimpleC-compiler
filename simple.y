@@ -220,7 +220,6 @@ assignment:
 		 if (i>=0) {
 			 fprintf(fasm, "\t#Push Local array var %s\n", id);
 			 fprintf(fasm, "\tmovq %d(%%rsp), %%%s\n", 8*(MAX_LOCALS-i), regStk[top]);
-			 fprintf(fasm, "\tmovq (%%%s), %%%s\n", regStk[top], regStk[top]);
 			 top++;
 		 }
 		 else {
@@ -508,7 +507,6 @@ regStk[top] );
 		 if (i>=0) {
 			 fprintf(fasm, "\t#Push Local array var %s\n", id);
 			 fprintf(fasm, "\tmovq %d(%%rsp), %%%s\n", 8*(MAX_LOCALS-i), regStk[top]);
-			 fprintf(fasm, "\tmovq (%%%s), %%%s\n", regStk[top], regStk[top]);
 			 top++;
 		 }
 		 else {
