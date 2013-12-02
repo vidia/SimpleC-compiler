@@ -655,6 +655,7 @@ statement:
 		fprintf(fasm, "\tjmp loop_assignment_%d\n", loopStack[loopTop]);
 		fprintf(fasm, "loop_end_%d:\n", loopStack[loopTop]);
 		loopTop--;
+	}
 	 | jump_statement
 	 ;
 
