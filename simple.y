@@ -55,6 +55,10 @@ char nregArgs = sizeof(regArgs)/sizeof(char*);
 int loopStack[MAX_NESTED_LOOPS];
 int loopTop = 0; 
 
+#define MAX_DEPTH 1000
+int regStackTopStack[MAX_DEPTH];
+int regStackTopStackTop = 0; 
+
 int current_type;
 
 int top = 0;
@@ -242,7 +246,8 @@ assignment:
 	 ;
 
 call :
-         WORD LPARENT  call_arguments RPARENT {
+         { //hello
+		 } WORD LPARENT  call_arguments RPARENT {
 		 char * funcName = $<string_val>1;
 		 int nargs = $<nargs>3;
 		 int i;
@@ -450,7 +455,7 @@ multiplicative_expr:
 		}
       }
 	  | multiplicative_expr PERCENT primary_expr {
-		fprintf(fasm,"\n\t# /\n");
+		fprintf(fasm,"\n\t# mod\n");
 		if (top<nregStk) {
 			fprintf(fasm, "\tmovq $0, %rdx\n");
 			fprintf(fasm, "\tmovq %%%s, %rax\n", regStk[top-2]);
@@ -478,7 +483,7 @@ primary_expr:
 		  }
 		  nstrings++;
 	  }
-          | call
+      | call
 	  | WORD {
   		// Lookup local var
 		 int i;
