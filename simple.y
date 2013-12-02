@@ -533,6 +533,7 @@ regStk[top] );
 			 fprintf(fasm, "\t#Push Local array var %s\n", id);
 			 fprintf(fasm, "\tmovq %%rsp, %%rbp\n");
 			 fprintf(fasm, "\taddq $%d, %%rbp\n", 8*(MAX_LOCALS-i));
+			 fprintf(fasm, "\taddq $%d, %%rbp\n", 8*(MAX_LOCALS-i));
 			 fprintf(fasm, "\tmovq %%rbp, %%%s\n", regStk[top]);
 			 top++;
 		 }
@@ -693,6 +694,15 @@ jump_statement:
 	 | RETURN expression SEMICOLON {
 		 fprintf(fasm, "\tmovq %%rbx, %%rax\n");
 		 top = 0;
+		 
+		 fprintf(fasm, "\taddq $%d,%%rsp\n", 8*MAX_LOCALS); // Restore space in stack for local vars
+		 fprintf(fasm, "# Restore registers\n");
+		 fprintf(fasm, "\tpopq %%r15\n");
+		 fprintf(fasm, "\tpopq %%r14\n");
+		 fprintf(fasm, "\tpopq %%r13\n");
+		 fprintf(fasm, "\tpopq %%r10\n");
+		 fprintf(fasm, "\tpopq %%rbx\n");
+		 fprintf(fasm, "\tret\n", $2);
 	 }
 	 ;
 
