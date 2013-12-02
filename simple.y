@@ -135,7 +135,7 @@ function:
 		 fprintf(fasm, "\tpushq %%r15\n");
 		 fprintf(fasm, "\tsubq $%d,%%rsp\n", 8*MAX_LOCALS); // Reserve space for args and locals
 		 nlocals = 0;
-
+		top = 0; 
 	 }
 	 LPARENT arguments RPARENT 
          {
