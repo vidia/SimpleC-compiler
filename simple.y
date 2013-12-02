@@ -702,7 +702,7 @@ jump_statement:
 		 fprintf(fasm, "\tpopq %%r13\n");
 		 fprintf(fasm, "\tpopq %%r10\n");
 		 fprintf(fasm, "\tpopq %%rbx\n");
-		 fprintf(fasm, "\tret\n", $2);
+		 fprintf(fasm, "\tret\n");
 	 }
 	 ;
 
