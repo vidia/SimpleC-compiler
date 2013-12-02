@@ -181,17 +181,11 @@ global_var:
 global_var_list: WORD {
  	fprintf(fasm," # Reserve space\n");
 	fprintf(fasm,"\t.data\n");
-	fprintf(fasm, "%s:\n", $<string_val>1); 
-	fprintf(fasm, "\t.long 0\n");
-	fprintf(fasm, "\t.long 0\n");
+	fprintf(fasm, "\n.comm %s, 8\n", $<string_val>1);
 	fprintf(fasm,"\n");
         }
 | global_var_list COMA WORD {
- 	fprintf(fasm," # Reserve space\n");
-	fprintf(fasm,"\t.data\n");
-	fprintf(fasm, "%s:\n", $<string_val>3); 
-	fprintf(fasm, "\t.long 0\n");
-	fprintf(fasm, "\t.long 0\n");
+	fprintf(fasm, "\n.comm %s, 8\n", $<string_val>1);
 	fprintf(fasm,"\n");
 }
         ;
