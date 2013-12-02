@@ -246,8 +246,7 @@ assignment:
 	 ;
 
 call :
-         { //hello
-		 } WORD LPARENT  call_arguments RPARENT {
+         WORD LPARENT  call_arguments RPARENT {
 		 char * funcName = $<string_val>1;
 		 int nargs = $<nargs>3;
 		 int i;
