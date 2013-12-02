@@ -666,14 +666,12 @@ else_optional:
 
 jump_statement:
      CONTINUE SEMICOLON {
-		$<my_nlabel>1=nlabel;
 		fprintf(fasm, "\n\t# CONTINUE\n");
-		fprintf(fasm, "\tjmp loop_continue_%d\n", --$<my_nlabel>1);
+		fprintf(fasm, "\tjmp loop_continue_%d\n", loopStack[loopTop]);
 	 }
 	 | BREAK SEMICOLON {
-		$<my_nlabel>1=nlabel;
 		fprintf(fasm, "\n\t# BREAK\n");
-		fprintf(fasm, "\tjmp loop_end_%d\n", --$<my_nlabel>1);
+		fprintf(fasm, "\tjmp loop_end_%d\n", loopStack[loopTop]);
 	 }
 	 | RETURN expression SEMICOLON {
 		 fprintf(fasm, "\tmovq %%rbx, %%rax\n");
