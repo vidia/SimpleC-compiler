@@ -598,62 +598,62 @@ statement:
 		loopStack[loopTop++] = nlabel; 
 		nlabel++;
 		fprintf(fasm, "\n\t# Begin WHILE loop\n");
-		fprintf(fasm, "loop_start_%d:\n", loopStack[loopTop]);
-		fprintf(fasm, "loop_continue_%d:\n", loopStack[loopTop]);
+		fprintf(fasm, "loop_start_%d:\n", loopStack[loopTop-1]);
+		fprintf(fasm, "loop_continue_%d:\n", loopStack[loopTop-1]);
 	 }
         expression RPARENT {
 		// act2
 		fprintf(fasm, "\tcmpq $0, %%%s\n", regStk[top-1]);
-		fprintf(fasm, "\tje loop_end_%d\n", loopStack[loopTop]);
+		fprintf(fasm, "\tje loop_end_%d\n", loopStack[loopTop-1]);
 		top--;
          }
          statement {
 		// act3
-		fprintf(fasm, "\tjmp loop_start_%d\n", loopStack[loopTop]);
-		fprintf(fasm, "loop_end_%d:\n", loopStack[loopTop]);
+		fprintf(fasm, "\tjmp loop_start_%d\n", loopStack[loopTop-1]);
+		fprintf(fasm, "loop_end_%d:\n", loopStack[loopTop-1]);
 		loopTop--;
 	 }
 	 | DO {
 		loopStack[loopTop++] = nlabel; 
 		nlabel++;
 		fprintf(fasm, "\n\t# Begin DO/WHILE loop\n");
-		fprintf(fasm, "loop_start_%d:\n", loopStack[loopTop]);
-		fprintf(fasm, "loop_continue_%d:\n", loopStack[loopTop]);
+		fprintf(fasm, "loop_start_%d:\n", loopStack[loopTop-1]);
+		fprintf(fasm, "loop_continue_%d:\n", loopStack[loopTop-1]);
 	 }
 	 statement WHILE LPARENT expression {
 		fprintf(fasm, "\tcmpq $0, %%%s\n", regStk[top-1]);
-		fprintf(fasm, "\tjne loop_start_%d\n", loopStack[loopTop]);
+		fprintf(fasm, "\tjne loop_start_%d\n", loopStack[loopTop-1]);
 		top--;
 	 }
 	 RPARENT SEMICOLON {
-		fprintf(fasm, "loop_end_%d:\n", loopStack[loopTop]);
+		fprintf(fasm, "loop_end_%d:\n", loopStack[loopTop-1]);
 		loopTop--;
 	 }
 	 | FOR LPARENT assignment SEMICOLON {
 		loopStack[loopTop++] = nlabel;
 		nlabel++;
 		fprintf(fasm, "\n\t# Begin FOR loop\n");
-		fprintf(fasm, "loop_start_%d:\n", loopStack[loopTop]);
+		fprintf(fasm, "loop_start_%d:\n", loopStack[loopTop-1]);
 	 }
 	 expression {
 		fprintf(fasm, "\tcmpq $0, %%%s\n", regStk[top-1]);
-		fprintf(fasm, "\tje loop_end_%d\n", loopStack[loopTop]);
-		fprintf(fasm, "\tjne loop_body_start_%d\n", loopStack[loopTop]);
+		fprintf(fasm, "\tje loop_end_%d\n", loopStack[loopTop-1]);
+		fprintf(fasm, "\tjne loop_body_start_%d\n", loopStack[loopTop-1]);
 		top--;
 	 } 
 	 SEMICOLON {
-		fprintf(fasm, "\tloop_assignment_%d:\n", loopStack[loopTop]);
-		fprintf(fasm, "loop_continue_%d:\n", loopStack[loopTop]);
+		fprintf(fasm, "\tloop_assignment_%d:\n", loopStack[loopTop-1]);
+		fprintf(fasm, "loop_continue_%d:\n", loopStack[loopTop-1]);
 	 }
 	 assignment {
-		fprintf(fasm, "\tjmp loop_start_%d\n", loopStack[loopTop]);
+		fprintf(fasm, "\tjmp loop_start_%d\n", loopStack[loopTop-1]);
 	 }
 	 RPARENT {
-		fprintf(fasm, "\tloop_body_start_%d:\n", loopStack[loopTop]);
+		fprintf(fasm, "\tloop_body_start_%d:\n", loopStack[loopTop-1]);
 	 }
 	 statement {
-		fprintf(fasm, "\tjmp loop_assignment_%d\n", loopStack[loopTop]);
-		fprintf(fasm, "loop_end_%d:\n", loopStack[loopTop]);
+		fprintf(fasm, "\tjmp loop_assignment_%d\n", loopStack[loopTop-1]);
+		fprintf(fasm, "loop_end_%d:\n", loopStack[loopTop-1]);
 		loopTop--;
 	}
 	 | jump_statement
@@ -667,11 +667,11 @@ else_optional:
 jump_statement:
      CONTINUE SEMICOLON {
 		fprintf(fasm, "\n\t# CONTINUE\n");
-		fprintf(fasm, "\tjmp loop_continue_%d\n", loopStack[loopTop]);
+		fprintf(fasm, "\tjmp loop_continue_%d\n", loopStack[loopTop-1]);
 	 }
 	 | BREAK SEMICOLON {
 		fprintf(fasm, "\n\t# BREAK\n");
-		fprintf(fasm, "\tjmp loop_end_%d\n", loopStack[loopTop]);
+		fprintf(fasm, "\tjmp loop_end_%d\n", loopStack[loopTop-1]);
 	 }
 	 | RETURN expression SEMICOLON {
 		 fprintf(fasm, "\tmovq %%rbx, %%rax\n");
