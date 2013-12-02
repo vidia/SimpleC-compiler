@@ -51,6 +51,10 @@ char nregStk = sizeof(regStk)/sizeof(char*);
 char *regArgs[]={ "rdi", "rsi", "rdx", "rcx", "r8", "r9"};
 char nregArgs = sizeof(regArgs)/sizeof(char*);
 
+#define MAX_NESTED_LOOPS 20
+int loopStack[MAX_NESTED_LOOPS];
+int loopTop = 0; 
+
 int current_type;
 
 int top = 0;
