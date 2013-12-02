@@ -526,7 +526,7 @@ regStk[top] );
 	  | AMPERSAND WORD {
 		 // Lookup local var
 		 int i;
- 	     char * id = $<string_val>1;
+ 	     char * id = $<string_val>2;
 		 i = lookupLocalVar(id);
 		 
 		 if (i>=0) {
