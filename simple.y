@@ -523,7 +523,24 @@ regStk[top] );
 		 //dereference
 		 fprintf(fasm, "\tmovq (%%%s), %%%s\n", regStk[top-1], regStk[top-1]);
 	  }
-	  | AMPERSAND WORD
+	  | AMPERSAND WORD {
+		 // Lookup local var
+		 int i;
+ 	     char * id = $<string_val>1;
+		 i = lookupLocalVar(id);
+		 
+		 if (i>=0) {
+			 fprintf(fasm, "\t#Push Local array var %s\n", id);
+			 fprintf(fasm, "\tmovq %d(%%rsp), %%%s\n", 8*(MAX_LOCALS-i), regStk[top]);
+			 top++;
+		 }
+		 else {
+			 fprintf(fasm, "\t#Push Global array var %s\n", id);
+			 fprintf(fasm, "\tmovq %s, %%%s\n", id, regStk[top]);
+			 top++;
+		 }
+		 
+	  }
 	  | INTEGER_CONST {
 		  fprintf(fasm, "\n\t# push %s\n", $<string_val>1);
 		  if (top<nregStk) {
