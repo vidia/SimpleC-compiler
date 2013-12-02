@@ -532,7 +532,7 @@ regStk[top] );
 		 if (i>=0) {
 			 fprintf(fasm, "\t#Push Local array var %s\n", id);
 			 fprintf(fasm, "\tmovq %%rsp, %%rbp\n");
-			 fprintf(fasm, "\taddq %d, %%rbp\n", 8*(MAX_LOCALS-i));
+			 fprintf(fasm, "\taddq $%d, %%rbp\n", 8*(MAX_LOCALS-i));
 			 fprintf(fasm, "\tmovq %%rbp, %%%s\n", regStk[top]);
 			 top++;
 		 }
