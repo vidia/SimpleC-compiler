@@ -531,15 +531,12 @@ regStk[top] );
 		 
 		 if (i>=0) {
 			 fprintf(fasm, "\t#Push Local array var %s\n", id);
-			 fprintf(fasm, "\tmovq %%rsp, %%rbp\n");
-			 fprintf(fasm, "\taddq $%d, %%rbp\n", 8*(MAX_LOCALS-i));
-			 fprintf(fasm, "\taddq $%d, %%rbp\n", 8*(MAX_LOCALS-i));
-			 fprintf(fasm, "\tmovq %%rbp, %%%s\n", regStk[top]);
+			 fprintf(fasm, "\tleaq %d(%%rsp), %%%s\n", 8*(MAX_LOCALS-i), regStk[top]);
 			 top++;
 		 }
 		 else {
 			 fprintf(fasm, "\t#Push Global array var %s\n", id);
-			 fprintf(fasm, "\tmovq %s, %%%s\n", id, regStk[top]);
+			 fprintf(fasm, "\tleaq %s, %%%s\n", id, regStk[top]);
 			 top++;
 		 }
 		 
