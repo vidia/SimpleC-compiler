@@ -47,7 +47,7 @@ main:
 	# push 9
 	movq $9,%r13
 
-	# /
+	# mod
 	movq $0, %rdx
 	movq %r10, %rax
 	divq %r13

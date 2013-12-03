@@ -1,8 +1,7 @@
  # Reserve space
 	.data
-h:
-	.long 0
-	.long 0
+
+.comm h, 8
 
 	.text
 .globl compute
@@ -67,6 +66,14 @@ compute:
 	# -
 	subq %r10,%rbx
 	movq %rbx, %rax
+	addq $128,%rsp
+# Restore registers
+	popq %r15
+	popq %r14
+	popq %r13
+	popq %r10
+	popq %rbx
+	ret
 	addq $128,%rsp
 # Restore registers
 	popq %r15

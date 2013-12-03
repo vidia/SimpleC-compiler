@@ -28,23 +28,41 @@ main:
 
 	# push 8
 	movq $8,%rbx
+	
+#Calculating array offset...
+	#Multiply the index by 8
+	movq $8, %rbp
+	imulq %rbp, %rbx
+	#Push Local array var a
+	movq 128(%rsp), %r10
+	addq %r10, %rbx
 
 	# push 9
 	movq $9,%r10
-	#top=2
+	movq %r10, (%rbx)
+	#top=0
 
-	# push string "a[8]=%d\n" top=2
-	movq $string0, %r13
+	# push string "a[8]=%d\n" top=0
+	movq $string0, %rbx
 
 	# push 8
-	movq $8,%r14
+	movq $8,%r10
+	
+#Calculating array offset...
+	#Multiply the index by 8
+	movq $8, %rbp
+	imulq %rbp, %r10
+	#Push Local array var a
+	movq 128(%rsp), %r13
+	addq %r13, %r10
+	movq (%r10), %r10
      # func=printf nargs=2
      # Move values from reg stack to reg args
-	movq %r14, %rsi
-	movq %r13, %rdi
+	movq %r10, %rsi
+	movq %rbx, %rdi
 	movl    $0, %eax
 	call printf
-	movq %rax, %r13
+	movq %rax, %rbx
 	addq $128,%rsp
 # Restore registers
 	popq %r15

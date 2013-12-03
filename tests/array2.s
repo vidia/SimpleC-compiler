@@ -30,14 +30,16 @@ main:
 	movq $0,%rbx
 	#Assign to Local var i
 	movq %rbx, 120(%rsp)
-loop_start_0_1:
+
+	# Begin FOR loop
+loop_start_0:
 	#Push Local var i
 	movq 120(%rsp), %rbx
 
 	# push 20
 	movq $20,%r10
 
-	# !=
+	# <
 	cmp %r10, %rbx
 	jl less_0.000000
 	movq $0x0, %rbx
@@ -46,9 +48,10 @@ loop_start_0_1:
 	movq $0x1, %rbx
 	end_0.000000:
 	cmpq $0, %rbx
-	je loop_end_0_1
-	jne loop_body_start_0_1
-	loop_assignment_0_1:
+	je loop_end_0
+	jne loop_body_start_0
+	loop_assignment_0:
+loop_continue_0:
 	#Push Local var i
 	movq 120(%rsp), %rbx
 
@@ -59,10 +62,18 @@ loop_start_0_1:
 	addq %r10,%rbx
 	#Assign to Local var i
 	movq %rbx, 120(%rsp)
-	jmp loop_start_0_1
-	loop_body_start_0_1:
+	jmp loop_start_0
+	loop_body_start_0:
 	#Push Local var i
 	movq 120(%rsp), %rbx
+	
+#Calculating array offset...
+	#Multiply the index by 8
+	movq $8, %rbp
+	imulq %rbp, %rbx
+	#Push Local array var a
+	movq 128(%rsp), %r10
+	addq %r10, %rbx
 
 	# push 3
 	movq $3,%r10
@@ -71,31 +82,34 @@ loop_start_0_1:
 
 	# *
 	imulq %r13,%r10
-	jmp loop_assignment_0_1
-loop_end_0_1:
-	#top=2
+	movq %r10, (%rbx)
+	jmp loop_assignment_0
+loop_end_0:
+	#top=0
 
-	# push string "Ok so far\n" top=2
-	movq $string0, %r13
+	# push string "Ok so far\n" top=0
+	movq $string0, %rbx
      # func=printf nargs=1
      # Move values from reg stack to reg args
-	movq %r13, %rdi
+	movq %rbx, %rdi
 	movl    $0, %eax
 	call printf
-	movq %rax, %r13
+	movq %rax, %rbx
 
 	# push 0
 	movq $0,%rbx
 	#Assign to Local var i
 	movq %rbx, 120(%rsp)
-loop_start_1_1:
+
+	# Begin FOR loop
+loop_start_1:
 	#Push Local var i
 	movq 120(%rsp), %rbx
 
 	# push 20
 	movq $20,%r10
 
-	# !=
+	# <
 	cmp %r10, %rbx
 	jl less_1.000000
 	movq $0x0, %rbx
@@ -104,9 +118,10 @@ loop_start_1_1:
 	movq $0x1, %rbx
 	end_1.000000:
 	cmpq $0, %rbx
-	je loop_end_1_1
-	jne loop_body_start_1_1
-	loop_assignment_1_1:
+	je loop_end_1
+	jne loop_body_start_1
+	loop_assignment_1:
+loop_continue_1:
 	#Push Local var i
 	movq 120(%rsp), %rbx
 
@@ -117,8 +132,8 @@ loop_start_1_1:
 	addq %r10,%rbx
 	#Assign to Local var i
 	movq %rbx, 120(%rsp)
-	jmp loop_start_1_1
-	loop_body_start_1_1:
+	jmp loop_start_1
+	loop_body_start_1:
 	#top=0
 
 	# push string "%d: %d\n" top=0
@@ -127,6 +142,15 @@ loop_start_1_1:
 	movq 120(%rsp), %r10
 	#Push Local var i
 	movq 120(%rsp), %r13
+	
+#Calculating array offset...
+	#Multiply the index by 8
+	movq $8, %rbp
+	imulq %rbp, %r13
+	#Push Local array var a
+	movq 128(%rsp), %r14
+	addq %r14, %r13
+	movq (%r13), %r13
      # func=printf nargs=3
      # Move values from reg stack to reg args
 	movq %r13, %rdx
@@ -135,8 +159,8 @@ loop_start_1_1:
 	movl    $0, %eax
 	call printf
 	movq %rax, %rbx
-	jmp loop_assignment_1_1
-loop_end_1_1:
+	jmp loop_assignment_1
+loop_end_1:
 	addq $128,%rsp
 # Restore registers
 	popq %r15

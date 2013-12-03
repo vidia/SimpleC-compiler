@@ -1,16 +1,13 @@
 #!/bin/sh
 
 (cd ..; make clean; make scc)
-export PATH=$PATH:.
+
 SCC=../scc
 GCC=gcc
 total=0
 totalmax=0
 
 rm -f total.txt
-
-# Limit size of files to 500K
-ulimit -f 500
 
 # Test driver
 function runtest {

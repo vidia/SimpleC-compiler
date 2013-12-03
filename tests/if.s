@@ -12,54 +12,60 @@ main:
 
 	# push 1
 	movq $1,%rbx
+
+	# Begin IF statement
 	cmpq $0, %rbx
 	je ifEnd_1.000000
-	#top=1
+	#top=0
 
-	# push string "OK1\n" top=1
-	movq $string0, %r10
+	# push string "OK1\n" top=0
+	movq $string0, %rbx
      # func=printf nargs=1
      # Move values from reg stack to reg args
-	movq %r10, %rdi
+	movq %rbx, %rdi
 	movl    $0, %eax
 	call printf
-	movq %rax, %r10
+	movq %rax, %rbx
 	jmp ifAbsEnd_1.000000
 	ifEnd_1.000000:
 	ifAbsEnd_1.000000:
 
 	# push 0
 	movq $0,%rbx
+
+	# Begin IF statement
 	cmpq $0, %rbx
 	je ifEnd_2.000000
-	#top=1
+	#top=0
 
-	# push string "OK2\n" top=1
-	movq $string1, %r10
+	# push string "OK2\n" top=0
+	movq $string1, %rbx
      # func=printf nargs=1
      # Move values from reg stack to reg args
-	movq %r10, %rdi
+	movq %rbx, %rdi
 	movl    $0, %eax
 	call printf
-	movq %rax, %r10
+	movq %rax, %rbx
 	jmp ifAbsEnd_2.000000
 	ifEnd_2.000000:
 	ifAbsEnd_2.000000:
 
 	# push 1
 	movq $1,%rbx
+
+	# Begin IF statement
 	cmpq $0, %rbx
 	je ifEnd_3.000000
-	#top=1
+	#top=0
 
-	# push string "OK3\n" top=1
-	movq $string2, %r10
+	# push string "OK3\n" top=0
+	movq $string2, %rbx
      # func=printf nargs=1
      # Move values from reg stack to reg args
-	movq %r10, %rdi
+	movq %rbx, %rdi
 	movl    $0, %eax
 	call printf
-	movq %rax, %r10
+	movq %rax, %rbx
 	jmp ifAbsEnd_3.000000
 	ifEnd_3.000000:
 	#top=0
@@ -76,18 +82,20 @@ main:
 
 	# push 0
 	movq $0,%rbx
+
+	# Begin IF statement
 	cmpq $0, %rbx
 	je ifEnd_4.000000
-	#top=1
+	#top=0
 
-	# push string "OK5\n" top=1
-	movq $string4, %r10
+	# push string "OK5\n" top=0
+	movq $string4, %rbx
      # func=printf nargs=1
      # Move values from reg stack to reg args
-	movq %r10, %rdi
+	movq %rbx, %rdi
 	movl    $0, %eax
 	call printf
-	movq %rax, %r10
+	movq %rax, %rbx
 	jmp ifAbsEnd_4.000000
 	ifEnd_4.000000:
 	#top=0

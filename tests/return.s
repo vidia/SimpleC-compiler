@@ -31,6 +31,14 @@ compute:
 	popq %r10
 	popq %rbx
 	ret
+	addq $128,%rsp
+# Restore registers
+	popq %r15
+	popq %r14
+	popq %r13
+	popq %r10
+	popq %rbx
+	ret
 	.text
 .globl main
 main:

@@ -13,15 +13,33 @@ inc:
 
 	# push 0
 	movq $0,%rbx
+	
+#Calculating array offset...
+	#Multiply the index by 8
+	movq $8, %rbp
+	imulq %rbp, %rbx
+	#Push Local array var a
+	movq 128(%rsp), %r10
+	addq %r10, %rbx
 
 	# push 0
 	movq $0,%r10
+	
+#Calculating array offset...
+	#Multiply the index by 8
+	movq $8, %rbp
+	imulq %rbp, %r10
+	#Push Local array var a
+	movq 128(%rsp), %r13
+	addq %r13, %r10
+	movq (%r10), %r10
 
 	# push 1
 	movq $1,%r13
 
 	# +
 	addq %r13,%r10
+	movq %r10, (%rbx)
 	addq $128,%rsp
 # Restore registers
 	popq %r15
@@ -43,27 +61,29 @@ main:
 	#Save arguments
 
 	# push 8
-	movq $8,%r13
+	movq $8,%rbx
 	#Assign to Local var a
-	movq %r13, 128(%rsp)
-	#top=2
+	movq %rbx, 128(%rsp)
+	#top=0
 
-	# push string "a=%d\n" top=2
-	movq $string0, %r13
+	# push string "a=%d\n" top=0
+	movq $string0, %rbx
 	#Push Local var a
-	movq 128(%rsp), %r14
+	movq 128(%rsp), %r10
      # func=printf nargs=2
      # Move values from reg stack to reg args
-	movq %r14, %rsi
-	movq %r13, %rdi
+	movq %r10, %rsi
+	movq %rbx, %rdi
 	movl    $0, %eax
 	call printf
-	movq %rax, %r13
+	movq %rax, %rbx
+	#Push Local array var a
+	leaq 128(%rsp), %rbx
      # func=inc nargs=1
      # Move values from reg stack to reg args
-	movq %(null), %rdi
+	movq %rbx, %rdi
 	call inc
-	movq %rax, %(null)
+	movq %rax, %rbx
 	#top=0
 
 	# push string "a=%d\n" top=0

@@ -45,10 +45,11 @@ int local_vars_type[MAX_LOCALS];
 int nstrings = 0;
 char * string_table[MAX_STRINGS];
 
-char *regStk[]={ "rbx", "r10", "r13", "r14", "r15"};
+char *regStkByte[] = { "bl", "r10b", "r13b", "r14b", "r15b"};
+char *regStk[]=      { "rbx", "r10", "r13", "r14", "r15"};
 char nregStk = sizeof(regStk)/sizeof(char*);
 
-char *regArgs[]={ "rdi", "rsi", "rdx", "rcx", "r8", "r9"};
+char *regArgs[]= { "rdi", "rsi", "rdx", "rcx", "r8", "r9"};
 char nregArgs = sizeof(regArgs)/sizeof(char*);
 
 #define MAX_NESTED_LOOPS 20
@@ -59,6 +60,12 @@ int loopTop = 0;
 int regStackTopStack[MAX_DEPTH];
 int regStackTopStackTop = 0; 
 
+
+#define _CHARSTAR 1
+#define _CHARSTARSTAR 2
+#define _LONG 3
+#define _LONGSTAR 4
+#define _VOID 5
 int current_type;
 
 int top = 0;
@@ -66,6 +73,8 @@ int top = 0;
 int nargs =0;
  
 int nlabel = 0;
+
+int strNullCheck = 0; 
 
 double jumpLabelCounter = 0; 
 
@@ -135,7 +144,7 @@ function:
 		 fprintf(fasm, "\tpushq %%r15\n");
 		 fprintf(fasm, "\tsubq $%d,%%rsp\n", 8*MAX_LOCALS); // Reserve space for args and locals
 		 nlocals = 0;
-		top = 0; 
+		 top = 0; 
 	 }
 	 LPARENT arguments RPARENT 
          {
@@ -171,7 +180,7 @@ arguments:
 
 arg: var_type WORD {
         char * id = $<string_val>2;
-        addLocalVar(id, 0/*current_type*/);
+        addLocalVar(id, current_type);
 }
 ;
 
@@ -183,14 +192,16 @@ global_var_list: WORD {
 	fprintf(fasm,"\t.data\n");
 	fprintf(fasm, "\n.comm %s, 8\n", $<string_val>1);
 	fprintf(fasm,"\n");
+	addGlobalVar($<string_val>1, current_type);
         }
 | global_var_list COMA WORD {
-	fprintf(fasm, "\n.comm %s, 8\n", $<string_val>1);
+	fprintf(fasm, "\n.comm %s, 8\n", $<string_val>3);
 	fprintf(fasm,"\n");
+	addGlobalVar($<string_val>3, current_type);
 }
         ;
 
-var_type: CHARSTAR | CHARSTARSTAR | LONG | LONGSTAR | VOID;
+var_type: CHARSTAR {current_type = _CHARSTAR;} | CHARSTARSTAR {current_type = _CHARSTARSTAR;}| LONG {current_type = _LONG;}| LONGSTAR {current_type = _LONGSTAR;}| VOID {current_type = _VOID;};
 
 assignment:
          WORD EQUAL expression {
@@ -212,11 +223,23 @@ assignment:
 		 int i;
  	     char * id = $<string_val>1;
 		 i = lookupLocalVar(id);
+		 int type = (i>=0) ? local_vars_type[i] : global_vars_type[lookupGlobalVar(id)];
 		 
-		 //multiply the top of the stack by 8
+		 
+		 //multiply the top of the stack 
 		 fprintf(fasm, "\t\n#Calculating array offset...\n");
-		 fprintf(fasm, "\t#Multiply the index by 8\n");
-		 fprintf(fasm, "\tmovq $8, %%rbp\n");
+		 
+		 if(type == _CHARSTAR)
+		 {
+		 	fprintf(fasm, "\t#Multiply the index by 1\n");
+		 	fprintf(fasm, "\tmovq $1, %%rbp\n");
+		 }
+		 else 
+		 {
+		 	fprintf(fasm, "\t#Multiply the index by 8\n");
+		 	fprintf(fasm, "\tmovq $8, %%rbp\n");
+		 }
+		 
 		 fprintf(fasm, "\timulq %%rbp, %%%s\n", regStk[top-1]);
 		 
 		 if (i>=0) {
@@ -499,11 +522,22 @@ regStk[top] );
 		 int i;
  	     char * id = $<string_val>1;
 		 i = lookupLocalVar(id);
+		 int type = (i>=0) ? local_vars_type[i] : global_vars_type[lookupGlobalVar(id)];
 		 
-		 //multiply the top of the stack by 8
+		  
+		 //multiply the top of the stack 
 		 fprintf(fasm, "\t\n#Calculating array offset...\n");
-		 fprintf(fasm, "\t#Multiply the index by 8\n");
-		 fprintf(fasm, "\tmovq $8, %%rbp\n");
+		 if(type == _CHARSTAR)
+		 {
+		 	fprintf(fasm, "\t#Multiply the index by 1\n");
+		 	fprintf(fasm, "\tmovq $1, %%rbp\n");
+		 }
+		 else 
+		 {
+		 	fprintf(fasm, "\t#Multiply the index by 8\n");
+		 	fprintf(fasm, "\tmovq $8, %%rbp\n");
+		 }
+		 
 		 fprintf(fasm, "\timulq %%rbp, %%%s\n", regStk[top-1]);
 		 
 		 if (i>=0) {
@@ -522,6 +556,16 @@ regStk[top] );
 		 
 		 //dereference
 		 fprintf(fasm, "\tmovq (%%%s), %%%s\n", regStk[top-1], regStk[top-1]);
+		 
+		 if(type == _CHARSTAR)
+		 {
+		 	fprintf(fasm, "\tmovb %%%s, %%bpl\n", regStkByte[top-1]);
+		 	fprintf(fasm, "\txor %%%s, %%%s\n", regStk[top-1], regStk[top-1]);
+		 	fprintf(fasm, "\tmovb %%bpl, %%%s\n", regStkByte[top-1]);
+		 }
+		 
+		 
+		 
 	  }
 	  | AMPERSAND WORD {
 		 // Lookup local var

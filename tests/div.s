@@ -43,7 +43,7 @@ main:
 	# push 11
 	movq $11,%r13
 
-	# /
+	# mod
 	movq $0, %rdx
 	movq %r10, %rax
 	divq %r13

@@ -1,8 +1,7 @@
  # Reserve space
 	.data
-i:
-	.long 0
-	.long 0
+
+.comm i, 8
 
 	.text
 .globl main
@@ -20,7 +19,10 @@ main:
 	movq $0,%rbx
 	#Assign to Global var i
 	movq %rbx, i
-loop_start_0_1:
+
+	# Begin DO/WHILE loop
+loop_start_0:
+loop_continue_0:
 	#top=0
 
 	# push string "i=%d\n" top=0
@@ -47,7 +49,7 @@ loop_start_0_1:
 	# push 11
 	movq $11,%r10
 
-	# !=
+	# <
 	cmp %r10, %rbx
 	jl less_0.000000
 	movq $0x0, %rbx
@@ -56,18 +58,18 @@ loop_start_0_1:
 	movq $0x1, %rbx
 	end_0.000000:
 	cmpq $0, %rbx
-	jne loop_start_0_1
-loop_end_0_1:
-	#top=1
+	jne loop_start_0
+loop_end_0:
+	#top=0
 
-	# push string "OK\n" top=1
-	movq $string1, %r10
+	# push string "OK\n" top=0
+	movq $string1, %rbx
      # func=printf nargs=1
      # Move values from reg stack to reg args
-	movq %r10, %rdi
+	movq %rbx, %rdi
 	movl    $0, %eax
 	call printf
-	movq %rax, %r10
+	movq %rax, %rbx
 	addq $128,%rsp
 # Restore registers
 	popq %r15

@@ -15,11 +15,26 @@ mystrlen:
 	movq $0,%rbx
 	#Assign to Local var l
 	movq %rbx, 120(%rsp)
-loop_start_0_1:
+
+	# Begin WHILE loop
+loop_start_0:
+loop_continue_0:
 	#Push Local var l
 	movq 120(%rsp), %rbx
+	
+#Calculating array offset...
+	#Multiply the index by 1
+	movq $1, %rbp
+	imulq %rbp, %rbx
+	#Push Local array var s
+	movq 128(%rsp), %r10
+	addq %r10, %rbx
+	movq (%rbx), %rbx
+	movb %bl, %bpl
+	xor %rbx, %rbx
+	movb %bpl, %bl
 	cmpq $0, %rbx
-	je loop_end_0_1
+	je loop_end_0
 	#Push Local var l
 	movq 120(%rsp), %rbx
 
@@ -30,11 +45,19 @@ loop_start_0_1:
 	addq %r10,%rbx
 	#Assign to Local var l
 	movq %rbx, 120(%rsp)
-	jmp loop_start_0_1
-loop_end_0_1:
+	jmp loop_start_0
+loop_end_0:
 	#Push Local var l
 	movq 120(%rsp), %rbx
 	movq %rbx, %rax
+	addq $128,%rsp
+# Restore registers
+	popq %r15
+	popq %r14
+	popq %r13
+	popq %r10
+	popq %rbx
+	ret
 	addq $128,%rsp
 # Restore registers
 	popq %r15
@@ -56,46 +79,91 @@ mystrcpy:
 	#Save arguments
 	movq %rdi,128(%rsp)
 	movq %rsi,120(%rsp)
-loop_start_1_1:
+
+	# Begin WHILE loop
+loop_start_1:
+loop_continue_1:
 
 	# push 0
 	movq $0,%rbx
+	
+#Calculating array offset...
+	#Multiply the index by 1
+	movq $1, %rbp
+	imulq %rbp, %rbx
+	#Push Local array var s2
+	movq 120(%rsp), %r10
+	addq %r10, %rbx
+	movq (%rbx), %rbx
+	movb %bl, %bpl
+	xor %rbx, %rbx
+	movb %bpl, %bl
 	cmpq $0, %rbx
-	je loop_end_1_1
+	je loop_end_1
 
 	# push 0
 	movq $0,%rbx
+	
+#Calculating array offset...
+	#Multiply the index by 1
+	movq $1, %rbp
+	imulq %rbp, %rbx
+	#Push Local array var s1
+	movq 128(%rsp), %r10
+	addq %r10, %rbx
 
 	# push 0
 	movq $0,%r10
-	#Push Local var s1
-	movq 128(%rsp), %r13
-
-	# push 1
-	movq $1,%r14
-
-	# +
-	addq %r14,%r13
-	#Assign to Local var s1
-	movq %r13, 128(%rsp)
-	#Push Local var s2
+	
+#Calculating array offset...
+	#Multiply the index by 1
+	movq $1, %rbp
+	imulq %rbp, %r10
+	#Push Local array var s2
 	movq 120(%rsp), %r13
+	addq %r13, %r10
+	movq (%r10), %r10
+	movb %r10b, %bpl
+	xor %r10, %r10
+	movb %bpl, %r10b
+	movq %r10, (%rbx)
+	#Push Local var s1
+	movq 128(%rsp), %rbx
 
 	# push 1
-	movq $1,%r14
+	movq $1,%r10
 
 	# +
-	addq %r14,%r13
+	addq %r10,%rbx
+	#Assign to Local var s1
+	movq %rbx, 128(%rsp)
+	#Push Local var s2
+	movq 120(%rsp), %rbx
+
+	# push 1
+	movq $1,%r10
+
+	# +
+	addq %r10,%rbx
 	#Assign to Local var s2
-	movq %r13, 120(%rsp)
-	jmp loop_start_1_1
-loop_end_1_1:
+	movq %rbx, 120(%rsp)
+	jmp loop_start_1
+loop_end_1:
 
 	# push 0
-	movq $0,%r13
+	movq $0,%rbx
+	
+#Calculating array offset...
+	#Multiply the index by 1
+	movq $1, %rbp
+	imulq %rbp, %rbx
+	#Push Local array var s1
+	movq 128(%rsp), %r10
+	addq %r10, %rbx
 
 	# push 0
-	movq $0,%r14
+	movq $0,%r10
+	movq %r10, (%rbx)
 	addq $128,%rsp
 # Restore registers
 	popq %r15
@@ -106,9 +174,8 @@ loop_end_1_1:
 	ret
  # Reserve space
 	.data
-g:
-	.long 0
-	.long 0
+
+.comm g, 8
 
 	.text
 .globl main
@@ -123,25 +190,26 @@ main:
 	#Save arguments
 
 	# push 30
-	movq $30,%r15
+	movq $30,%rbx
      # func=malloc nargs=1
      # Move values from reg stack to reg args
-	movq %r15, %rdi
+	movq %rbx, %rdi
 	call malloc
-	movq %rax, %r15
+	movq %rax, %rbx
 	#Assign to Local var h
-	movq %r15, 128(%rsp)
+	movq %rbx, 128(%rsp)
 	#Push Local var h
-	movq 128(%rsp), %r15
-	#top=5
+	movq 128(%rsp), %rbx
+	#top=1
 
-	# push string "Hello world" top=5
+	# push string "Hello world" top=1
+	movq $string0, %r10
      # func=mystrcpy nargs=2
      # Move values from reg stack to reg args
-	movq %r15, %rsi
-	movq %r14, %rdi
+	movq %r10, %rsi
+	movq %rbx, %rdi
 	call mystrcpy
-	movq %rax, %r14
+	movq %rax, %rbx
 	#top=0
 
 	# push string "h=%s\n" top=0

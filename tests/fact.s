@@ -24,12 +24,22 @@ fact:
 	nequal_0.000000:
 	movq $0x0, %rbx
 	end_0.000000:
+
+	# Begin IF statement
 	cmpq $0, %rbx
 	je ifEnd_1.000000
 
 	# push 1
-	movq $1,%r10
+	movq $1,%rbx
 	movq %rbx, %rax
+	addq $128,%rsp
+# Restore registers
+	popq %r15
+	popq %r14
+	popq %r13
+	popq %r10
+	popq %rbx
+	ret
 	jmp ifAbsEnd_1.000000
 	ifEnd_1.000000:
 	ifAbsEnd_1.000000:
@@ -52,6 +62,14 @@ fact:
 	# *
 	imulq %r10,%rbx
 	movq %rbx, %rax
+	addq $128,%rsp
+# Restore registers
+	popq %r15
+	popq %r14
+	popq %r13
+	popq %r10
+	popq %rbx
+	ret
 	addq $128,%rsp
 # Restore registers
 	popq %r15

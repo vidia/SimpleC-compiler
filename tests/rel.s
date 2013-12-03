@@ -20,7 +20,7 @@ main:
 	# push 8
 	movq $8,%r13
 
-	# !=
+	# <
 	cmp %r13, %r10
 	jl less_0.000000
 	movq $0x0, %r10
@@ -46,7 +46,7 @@ main:
 	# push 9
 	movq $9,%r13
 
-	# !=
+	# <
 	cmp %r13, %r10
 	jl less_1.000000
 	movq $0x0, %r10
@@ -72,7 +72,7 @@ main:
 	# push 8
 	movq $8,%r13
 
-	# !=
+	# <
 	cmp %r13, %r10
 	jl less_2.000000
 	movq $0x0, %r10
@@ -98,7 +98,7 @@ main:
 	# push 9
 	movq $9,%r13
 
-	# !=
+	# <
 	cmp %r13, %r10
 	jl less_3.000000
 	movq $0x0, %r10
@@ -124,7 +124,7 @@ main:
 	# push 8
 	movq $8,%r13
 
-	# !=
+	# >=
 	cmp %r13, %r10
 	jge greatequal_4.000000
 	movq $0x0, %r10
@@ -150,7 +150,7 @@ main:
 	# push 9
 	movq $9,%r13
 
-	# !=
+	# >=
 	cmp %r13, %r10
 	jge greatequal_5.000000
 	movq $0x0, %r10
@@ -176,7 +176,7 @@ main:
 	# push 9
 	movq $9,%r13
 
-	# !=
+	# >=
 	cmp %r13, %r10
 	jge greatequal_6.000000
 	movq $0x0, %r10
@@ -202,7 +202,7 @@ main:
 	# push 9
 	movq $9,%r13
 
-	# !=
+	# >=
 	cmp %r13, %r10
 	jge greatequal_7.000000
 	movq $0x0, %r10
@@ -228,7 +228,7 @@ main:
 	# push 8
 	movq $8,%r13
 
-	# !=
+	# <=
 	cmp %r13, %r10
 	jle lessequal_8.000000
 	movq $0x0, %r10
@@ -254,7 +254,7 @@ main:
 	# push 9
 	movq $9,%r13
 
-	# !=
+	# <=
 	cmp %r13, %r10
 	jle lessequal_9.000000
 	movq $0x0, %r10
@@ -280,7 +280,7 @@ main:
 	# push 9
 	movq $9,%r13
 
-	# !=
+	# <=
 	cmp %r13, %r10
 	jle lessequal_10.000000
 	movq $0x0, %r10
@@ -306,7 +306,7 @@ main:
 	# push 9
 	movq $9,%r13
 
-	# !=
+	# <=
 	cmp %r13, %r10
 	jle lessequal_11.000000
 	movq $0x0, %r10

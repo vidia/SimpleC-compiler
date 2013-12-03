@@ -1,8 +1,7 @@
  # Reserve space
 	.data
-i:
-	.long 0
-	.long 0
+
+.comm i, 8
 
 	.text
 .globl main
@@ -20,13 +19,15 @@ main:
 	movq $0,%rbx
 	#Assign to Global var i
 	movq %rbx, i
-loop_start_0_1:
+
+	# Begin FOR loop
+loop_start_0:
 	movq i, %rbx
 
 	# push 15
 	movq $15,%r10
 
-	# !=
+	# <
 	cmp %r10, %rbx
 	jl less_0.000000
 	movq $0x0, %rbx
@@ -35,9 +36,10 @@ loop_start_0_1:
 	movq $0x1, %rbx
 	end_0.000000:
 	cmpq $0, %rbx
-	je loop_end_0_1
-	jne loop_body_start_0_1
-	loop_assignment_0_1:
+	je loop_end_0
+	jne loop_body_start_0
+	loop_assignment_0:
+loop_continue_0:
 	movq i, %rbx
 
 	# push 1
@@ -47,8 +49,8 @@ loop_start_0_1:
 	addq %r10,%rbx
 	#Assign to Global var i
 	movq %rbx, i
-	jmp loop_start_0_1
-	loop_body_start_0_1:
+	jmp loop_start_0
+	loop_body_start_0:
 	#top=0
 
 	# push string "i=%d\n" top=0
@@ -61,8 +63,8 @@ loop_start_0_1:
 	movl    $0, %eax
 	call printf
 	movq %rax, %rbx
-	jmp loop_assignment_0_1
-loop_end_0_1:
+	jmp loop_assignment_0
+loop_end_0:
 	#top=0
 
 	# push string "OK\n" top=0

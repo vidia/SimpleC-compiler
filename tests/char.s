@@ -1,8 +1,7 @@
  # Reserve space
 	.data
-g:
-	.long 0
-	.long 0
+
+.comm g, 8
 
 	.text
 .globl main
@@ -28,6 +27,18 @@ main:
 
 	# push 6
 	movq $6,%r10
+	
+#Calculating array offset...
+	#Multiply the index by 1
+	movq $1, %rbp
+	imulq %rbp, %r10
+	#Push Local array var h
+	movq 128(%rsp), %r13
+	addq %r13, %r10
+	movq (%r10), %r10
+	movb %r10b, %bpl
+	xor %r10, %r10
+	movb %bpl, %r10b
      # func=printf nargs=2
      # Move values from reg stack to reg args
 	movq %r10, %rsi
@@ -48,6 +59,18 @@ main:
 
 	# push 11
 	movq $11,%r10
+	
+#Calculating array offset...
+	#Multiply the index by 1
+	movq $1, %rbp
+	imulq %rbp, %r10
+	#Push Global array var g
+	movq g, %r13
+	addq %r13, %r10
+	movq (%r10), %r10
+	movb %r10b, %bpl
+	xor %r10, %r10
+	movb %bpl, %r10b
      # func=printf nargs=2
      # Move values from reg stack to reg args
 	movq %r10, %rsi

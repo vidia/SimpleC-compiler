@@ -1,8 +1,7 @@
  # Reserve space
 	.data
-g:
-	.long 0
-	.long 0
+
+.comm g, 8
 
 	.text
 .globl compute
@@ -43,6 +42,14 @@ compute:
 	#Push Local var h
 	movq 104(%rsp), %rbx
 	movq %rbx, %rax
+	addq $128,%rsp
+# Restore registers
+	popq %r15
+	popq %r14
+	popq %r13
+	popq %r10
+	popq %rbx
+	ret
 	addq $128,%rsp
 # Restore registers
 	popq %r15

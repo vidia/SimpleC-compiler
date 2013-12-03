@@ -1,8 +1,7 @@
  # Reserve space
 	.data
-g:
-	.long 0
-	.long 0
+
+.comm g, 8
 
 	.text
 .globl main
